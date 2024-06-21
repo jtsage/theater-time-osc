@@ -1,0 +1,52 @@
+# Pedigree
+
+title = "Sample Theater"
+subtitle = "Sample Show"
+
+# OSC
+oscListenPort      = 4488
+oscSendAddress     = "127.0.0.1"
+oscSendPort        = 4444
+oscSendSwitch      = true
+oscSendActiveTimer = true
+oscSendTimerStatus = true
+
+# Local HTTP
+httpPort   = 2222
+
+[[switches]]
+title = "House"
+onText = "House is OPEN"
+offText = "House is NOT open"
+
+[[switches]]
+title = "Microphones"
+onText = "Microphones are READY"
+offText = "Microphones are NOT ready"
+
+[[switches]]
+title = "Places"
+onText = "Places HAS been called"
+offText = "Places HAS NOT been called"
+
+[[timers]]
+title = "Pre Show"
+start_countdown = true
+extras = [
+	"Bar Ready?",
+	"House Manager Ready?",
+	"Preshow Presenter Ready?"
+]
+
+[[timers]]
+title = "Act 1"
+count_up = true
+
+[[timers]]
+title = "Intermission"
+count_minutes = 3
+reset_switches = ["Places"]
+
+[[timers]]
+title = "Act 2"
+count_up = true

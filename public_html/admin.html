@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>Theater Time</title>
+		<link href="css/bootstrap.min.css" rel="stylesheet">
+		<link href="css/bootstrap-icons.css" rel="stylesheet">
+		<link href="css/theater-time-osc.css" rel="stylesheet">
+
+		<!--  ___  _               _            ___  _              -->
+		<!-- |_ _|| |_  ___  ___ _| |_ ___  _ _|_ _|<_>._ _ _  ___  -->
+		<!--  | | | . |/ ._><_> | | | / ._>| '_>| | | || ' ' |/ ._> -->
+		<!--  |_| |_|_|\___.<___| |_| \___.|_|  |_| |_||_|_|_|\___. -->
+		<!-- (c) 2024 J.T.Sage - ISC License -->
+
+		<link rel="apple-touch-icon" sizes="180x180" href="/icon/apple-touch-icon.png">
+		<link rel="icon" type="image/png" sizes="32x32" href="/icon/favicon-32x32.png">
+		<link rel="icon" type="image/png" sizes="16x16" href="/icon/favicon-16x16.png">
+		<link rel="manifest" href="/icon/site.webmanifest">
+		<link rel="mask-icon" href="/icon/safari-pinned-tab.svg" color="#5bbad5">
+		<link rel="shortcut icon" href="/icon/favicon.ico">
+		<meta name="msapplication-TileColor" content="#2d89ef">
+		<meta name="msapplication-config" content="/icon/browserconfig.xml">
+		<meta name="theme-color" content="#ffffff">
+
+		<script src="/js/timer_shared.js"></script>
+		<script>
+			document.addEventListener('DOMContentLoaded', () => {
+				getData(true)
+			})
+		</script>
+	</head>
+	<body data-bs-theme="dark">
+		<div class="fixed-top pt-0 bg-primary-subtle" id="main-header">
+			<img alt="" src="icon/android-chrome-192x192.png" id="main-icon" class="img-fluid">
+			<h5 class="card-title d-inline align-middle">TheaterTime</h5>
+			<h6 class="card-subtitle mb-2 text-body-secondary d-inline align-middle" id="dyn_event_title">--</h6>
+			<h6 class="card-subtitle mb-2 text-body-tertiary d-inline align-middle" id="dyn_event_subtitle">--</h6>
+		</div>
+		<div class="container p-4 mt-4">
+			<div id="dyn_error_offline" class="text-center d-none alert alert-danger" role="alert">
+				Unable to contact backend, will retry every 5 minutes!
+			</div>
+
+			<div class="card text-bg-primary">
+				<div class="card-body text-center">
+					<p class="card-text">Show is scheduled to start at <strong id="dyn_time_start">--:--</strong></p>
+				</div>
+			</div>
+
+			<div class="row justify-content-center py-3 gy-2 gx-2" id="dyn_switch_contain">
+			</div>
+
+			<div class="text-bg-success p-5 rounded-3 d-none" id="dyn_timer_done">
+				<div class="row">
+					<div class="col-2"><i class="huge-text bi bi-hand-thumbs-up"></i></div>
+					<div class="col-10 text-center text-light align-content-center">
+						<h3 class="card-title mb-4">Timers Complete</h3>
+						<p class="h6 fw-normal card-text">This show has been completed, thanks everyone!</p>
+					</div>
+				</div>
+			</div>
+
+			<div class="row  gy-2 gx-2" id="dyn_timer_contain"></div>
+
+		</div>
+		<footer class="footer fixed-bottom mt-auto bg-primary-subtle small border-top" id="main-footer">
+			<div class="container-fluid text-center">
+				<a href="https://github.com/jtsage/theater-time-osc">TheaterTimeOSC</a> &copy;2024 J.T.Sage
+			</div>
+		</footer>
+
+		<script src="js/bootstrap.bundle.min.js"></script>
+
+	<template id="template-switch">
+		<div class="col-md-3 col-sm-6 h-100 align-self-stretch">
+			<div class="card text-bg-{{color}}">
+				<div class="card-body text-center">
+					<h5 class="card-title">{{title}}</h5>
+					<p class="card-text small">{{text}}</p>
+				</div>
+			</div>
+		</div>
+	</template>
+
+	<template id="template-timer">
+		<div class="col-6">
+			<div class="h-100 p-2 p-lg-3 rounded-3 {{color}}" id="timer_box-{{id}}">
+				<div class="box-icons position-absolute">
+					{{icon}}
+				</div>
+				<div class="row p-md-4">
+					<div class="text-center text-light align-content-center">
+						<h3 class="card-title mb-4">{{title}}</h3>
+						<p class="h1 fw-normal mb-4" id="dyn_timer_time-{{id}}">{{time}}</p>
+						<p class="fw-normal card-text {{showExtras}}"><strong>Additional Tasks:</strong><br>{{extras}}</p>
+						<p class="fw-normal card-text {{showStartTime}}"><strong>Started At:</strong> {{startTime}}</p>
+						<p class="fw-normal card-text {{showEndTime}}"><strong>Ended At:</strong> {{endTime}}</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</template>
+	</body>
+</html>

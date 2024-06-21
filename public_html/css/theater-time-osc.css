@@ -1,0 +1,30 @@
+#main-header {
+	min-height: 40px
+}
+
+#main-icon {
+	height: 36px;
+	margin-top: 2px;
+}
+
+.box-icons { margin-top: -31px; }
+
+.huge-text {
+	font-size: 700%;
+	color: rgba(200,200,200,0.2);
+}
+
+@media (max-width: 991.98px) {
+	.huge-text {
+		font-size: 550%;
+	}
+	.box-icons { margin-top: -25px; }
+	.card-text { font-size: 85%; }
+}
+@media (max-width: 767.98px) {
+	.huge-text {
+		font-size: 350%;
+	}
+	.box-icons { margin-top: -17px; }
+	.card-text { font-size: 77%; }
+}
