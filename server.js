@@ -4,7 +4,7 @@
     |_| |_|_|\___.<___| |_| \___.|_|  |_| |_||_|_|_|\___.
 	(c) 2024 J.T.Sage - MIT License
 */
-const ThrTime = require('./lib/timers.js')
+const ThrTime  = require('./lib/timers.js')
 const dgram    = require('node:dgram')
 const fastify  = require('fastify')({ ignoreTrailingSlash : true, logger : true })
 const fs       = require('node:fs')
@@ -105,7 +105,7 @@ function doOSC(packet) {
 			else if ( addressParts[2] === 'stop' )     { theTimer.stopAll() }
 		}
 	} catch (err) {
-		process.stdout.write(`Invalid packet received : ${err}\n`)
+		process.stdout.write(`OSC packet problem : ${err}\n`)
 	}
 }
 
@@ -176,17 +176,17 @@ function sendTimer() {
 }
 
 function printTime (secondsLeft) {
-	const isNegative = secondsLeft < 0 ? '+ ' : ''
+	const timerOverRun = secondsLeft < 0 ? '+ ' : ''
 	const absSec     = Math.abs(secondsLeft)
 
-	const hr_hourLeft = Math.floor(absSec / 60 / 60)
-	const hr_minLeft  = Math.floor((absSec - hr_hourLeft*60*60) / 60)
-	const hr_secLeft  = Math.floor(absSec - ((hr_hourLeft*60*60) + (hr_minLeft*60)))
+	const hourLeft = Math.floor(absSec / 60 / 60)
+	const minLeft  = Math.floor((absSec - hourLeft*60*60) / 60)
+	const secLeft  = Math.floor(absSec - ((hourLeft*60*60) + (minLeft*60)))
 
-	if ( hr_hourLeft === 0 ) {
-		return `${isNegative}${zPadN(hr_minLeft)}:${zPadN(hr_secLeft)}`
+	if ( hourLeft === 0 ) {
+		return `${timerOverRun}${zPadN(minLeft)}:${zPadN(secLeft)}`
 	}
-	return `${isNegative}${hr_hourLeft}:${zPadN(hr_minLeft)}:${zPadN(hr_secLeft)}`
+	return `${timerOverRun}${hourLeft}:${zPadN(minLeft)}:${zPadN(secLeft)}`
 }
 
 function zPadN (num) { return num.toString().padStart(2, 0) }
@@ -201,6 +201,8 @@ function jsonRespond (obj, err = null) {
 }
 
 function writeState() {
-	const fileContents = theTimer.getSaveObject()
-	fs.writeFileSync(path.join(__dirname, 'current-state.json'), JSON.stringify(fileContents, null, 2))
+	fs.writeFileSync(
+		path.join(__dirname, 'current-state.json'),
+		JSON.stringify(theTimer.getSaveObject(), null, 2)
+	)
 }
