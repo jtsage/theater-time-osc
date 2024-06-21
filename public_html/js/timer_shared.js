@@ -17,15 +17,15 @@ const dateObjects  = {
 
 const byID      = (elementID) => document.getElementById(elementID)
 const zPadN     = (num) => num.toString().padStart(2, 0)
-const printTime = (secondsLeft) => {
-	const isNegative = secondsLeft < 0 ? '+ ' : ''
+const printTime = (secondsLeft, alwaysHour = false, noSign = false) => {
+	const isNegative = noSign ? '' : secondsLeft < 0 ? '+ ' : ''
 	const absSec     = Math.abs(secondsLeft)
 
 	const hr_hourLeft = Math.floor(absSec / 60 / 60)
 	const hr_minLeft  = Math.floor((absSec - hr_hourLeft*60*60) / 60)
 	const hr_secLeft  = Math.floor(absSec - ((hr_hourLeft*60*60) + (hr_minLeft*60)))
 
-	if ( hr_hourLeft === 0 ) {
+	if ( !alwaysHour && hr_hourLeft === 0 ) {
 		return `${isNegative}${zPadN(hr_minLeft)}:${zPadN(hr_secLeft)}`
 	}
 	return `${isNegative}${hr_hourLeft}:${zPadN(hr_minLeft)}:${zPadN(hr_secLeft)}`
@@ -71,14 +71,11 @@ const updateSwitches = () => {
 }
 
 const updateTimerAdmin = () => {
-	byID('dyn_timer_done').classList.add('d-none')
-	
 	const timerHTML = []
 
 	for ( const thisTimer of payload_data.timers ) {
 		const timerTemplate = byID('template-timer').innerHTML
 
-		const string_icon      = ( thisTimer.type === 'count-up' ) ? '<i class="huge-text bi bi-stopwatch-fill"></i>' : '<i class="huge-text bi bi-arrow-down-square-fill"></i>'
 		let string_startTime = ''
 		let string_endTime   = ''
 		let string_time      = ''
@@ -105,14 +102,16 @@ const updateTimerAdmin = () => {
 				string_startTime = printDate(startDate)
 			}
 
-			if ( thisTimer.type === 'absolute-down' || thisTimer.type === 'count-down' ) {
-				string_time = printTime((targetDate - endDate)/1000)
+			if ( thisTimer.type === 'absolute-down' ) {
+				const total = (targetDate - endDate)/1000
+				string_time = `${total < 0 ? 'LATE' : 'EARLY'}: ${printTime(total, true, true)}`
+			} else if ( thisTimer.type === 'count-down' ) {
+				string_time = `TOTAL : ${printTime((endDate - startDate)/1000, true)}`
 			} else { // count-up
-				string_time = printTime((endDate - startDate)/1000)
+				string_time = `TOTAL : ${printTime((endDate - startDate)/1000, true)}`
 			}
 		} else {
 			string_extras = thisTimer.extras.join(', ')
-			// console.log(thisTimer.extras)
 		}
 
 		if ( thisTimer.isOn ) {
@@ -169,7 +168,7 @@ const updateTimerAdmin = () => {
 			.replaceAll('{{showExtras}}', string_extras === '' ? 'd-none' : '')
 			.replaceAll('{{extras}}', string_extras)
 			.replaceAll('{{color}}', string_color)
-			.replaceAll('{{icon}}', string_icon)
+			.replaceAll('{{iconName}}', `icon-${thisTimer.type}`)
 		)
 	}
 	byID('dyn_timer_contain').innerHTML = timerHTML.join('')
@@ -179,22 +178,23 @@ const updateTimer = () => {
 	if ( payload_data.timers.length !== 1 ) {
 		byID('dyn_timer_done').classList.remove('d-none')
 		byID('dyn_running_timer').classList.add('d-none')
-	} else {
-		byID('dyn_timer_done').classList.add('d-none')
-		byID('dyn_running_timer').classList.remove('d-none')
+		return
 	}
-	//timerInterval
+
+	byID('dyn_timer_done').classList.add('d-none')
+	byID('dyn_running_timer').classList.remove('d-none')
 
 	const thisTimer = payload_data.timers[0]
 
 	byID('dyn_timer_title').innerText = thisTimer.title
+	byID('dyn_running_timer').classList.remove('icon-count-down', 'icon-absolute-down', 'icon-count-up')
+	byID('dyn_running_timer').classList.add(`icon-${thisTimer.type}`)
 
 	switch (thisTimer.type ) {
 		case 'count-down' :
 		case 'absolute-down' : {
 			dateObjects.timer = new Date(thisTimer.dateTarget)
-			byID('dyn_count_down').classList.remove('d-none')
-			byID('dyn_count_up').classList.add('d-none')
+			
 			const updateTime = () => {
 				const wholeSeconds = Math.floor((dateObjects.timer - new Date()) / 1000)
 				byID('dyn_timer_time').innerText = printTime(wholeSeconds)
@@ -212,8 +212,6 @@ const updateTimer = () => {
 		}
 		//case 'count-up' :
 		default : {
-			byID('dyn_count_down').classList.add('d-none')
-			byID('dyn_count_up').classList.remove('d-none')
 			byID('dyn_running_timer').classList.add('text-bg-primary')
 			byID('dyn_running_timer').classList.remove('text-bg-danger')
 			dateObjects.timer = new Date(thisTimer.dateStart)

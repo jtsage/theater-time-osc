@@ -49,28 +49,27 @@
 				</div>
 			</div>
 
-			<div class="row justify-content-center py-3 gy-2 gx-2" id="dyn_switch_contain">
-			</div>
-
-			<div class="text-bg-success p-5 rounded-3 d-none" id="dyn_timer_done">
-				<div class="row">
-					<div class="col-2"><i class="huge-text bi bi-hand-thumbs-up"></i></div>
-					<div class="col-10 text-center text-light align-content-center">
-						<h3 class="card-title mb-4">Timers Complete</h3>
-						<p class="h6 fw-normal card-text">This show has been completed, thanks everyone!</p>
-					</div>
+			<div class="row">
+				<div class="col-md-4">
+					<div class="row justify-content-center py-3 gy-2 gx-2" id="dyn_switch_contain"></div>
 				</div>
-			</div>
-
-			<div class="p-5 rounded-3 d-none" id="dyn_running_timer">
-				<div class="row">
-					<div class="col-2">
-						<i class="huge-text bi bi-arrow-down-square-fill d-none" id="dyn_count_down"></i>
-						<i class="huge-text bi bi-stopwatch-fill d-none" id="dyn_count_up"></i>
+				<div class="col-md-8 py-md-3">
+					<div class="text-bg-success p-5 rounded-3 d-none h-100 icon-timer-done" id="dyn_timer_done">
+						<div class="row h-100">
+							<div class="col-12 h-100 text-center text-white align-content-center">
+								<h3 class="card-title mb-4">Timers Complete</h3>
+								<p class="h6 fw-normal card-text">This show has been completed, thanks everyone!</p>
+							</div>
+						</div>
 					</div>
-					<div class="col-10 text-center text-light align-content-center">
-						<h3 class="card-title mb-4" id="dyn_timer_title">--</h3>
-						<p class="h1 fw-normal card-text" id="dyn_timer_time">--</p>
+
+					<div class="p-5 rounded-3 d-none h-100 icon-absolute-down" id="dyn_running_timer">
+						<div class="row">
+							<div class="col-12 text-center text-light align-content-center">
+								<h3 class="card-title mb-4" id="dyn_timer_title">--</h3>
+								<p class="h1 fw-normal" id="dyn_timer_time">--</p>
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -85,7 +84,7 @@
 		<script src="js/bootstrap.bundle.min.js"></script>
 
 	<template id="template-switch">
-		<div class="col-md-3 col-sm-6 h-100">
+		<div class="col-12">
 			<div class="card text-bg-{{color}}">
 				<div class="card-body text-center">
 					<h5 class="card-title">{{title}}</h5>

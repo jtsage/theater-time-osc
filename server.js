@@ -26,7 +26,6 @@ if ( theseArgs.length === 0 ) {
 	theTimer = new ThrTime.Timer(...theseArgs)
 }
 
-const oscOption  = theTimer.getOSC()
 const oscSocket  = dgram.createSocket({type : 'udp4', reuseAddr : true})
 const oscOutSock = dgram.createSocket({type : 'udp4', reuseAddr : true})
 const oscLib     = new osc.simpleOscLib()
@@ -41,7 +40,7 @@ oscSocket.on('listening', () => {
 	process.stdout.write(`listening to osc on ${address.address}:${address.port}\n`)
 })
 
-oscSocket.bind(oscOption.inPort, '0.0.0.0')
+oscSocket.bind(theTimer.OSCSettings.inPort, '0.0.0.0')
 
 theTimer.on('switch-updated', sendSwitch)
 theTimer.on('timer-updated', sendTimer)
@@ -57,7 +56,7 @@ fastify.setNotFoundHandler((_, reply) => {
 
 fastify.get('/api/read/remote', async (_, reply) => {
 	reply.type('application/json').code(200)
-	return jsonRespond({message : theTimer.getActiveOnly() })
+	return jsonRespond({message : theTimer.serializeActive() })
 })
 
 fastify.get('/api/read/admin', async (_, reply) => {
@@ -70,29 +69,29 @@ fastify.get('/api*', async (_, reply) => {
 	return jsonRespond({}, 'invalid-request')
 })
 
-fastify.listen({ port : theTimer.getHTTP().port }, (err) => {
+fastify.listen({ port : theTimer.HTTPSettings.port }, (err) => {
 	if (err) {
 		fastify.log.error(err)
 		process.exit(1)
 	}
 })
 
+/* Startup Tasks */
 sendSwitch()
 sendTimer()
 
-if ( oscOption.sendActiveTimer ) {
-	setInterval(sendActive, 500)
-}
+if ( theTimer.OSCSettings.sendActiveTimer ) { setInterval(sendActive, 500) }
+
+
+/* Helper Functions */
 
 function doOSC(packet) {
 	try {
-		const thisMessage = oscLib.readPacket(packet)
-
-		const addressParts = thisMessage.address.replace('/', '').split('/')
+		const addressParts = oscLib.readPacket(packet).address.replace('/', '').split('/')
 
 		if ( addressParts[0] !== 'theaterTime' ) { return }
 
-		process.stdout.write(`Acting on OSC : ${thisMessage.address}\n`)
+		process.stdout.write(`Acting on OSC : ${addressParts.join('/')}\n`)
 
 		if ( addressParts[1] === 'switch' ) {
 			const index = parseInt(addressParts[2]) - 1
@@ -110,74 +109,59 @@ function doOSC(packet) {
 }
 
 function sendActive() {
-	if ( oscOption.sendActiveTimer ) {
-		const thisTimer = theTimer.getRunningTimer()
+	if ( theTimer.OSCSettings.sendActiveTimer ) {
+		const thisTimer = theTimer.serializeOSCTimer()
+
 		if ( thisTimer === null ) { return }
 
-		let wholeSeconds = 0
-
-		if ( thisTimer.type === 'count-up') {
-			const theDate = new Date(thisTimer.dateStart)
-			wholeSeconds = Math.floor((new Date() - theDate) / 1000)
-		} else {
-			const theDate      = new Date(thisTimer.dateTarget)
-			wholeSeconds = Math.floor((theDate - new Date()) / 1000)
-		}
-		const buffer = oscLib
+		sendOSCOut(oscLib
 			.messageBuilder('/theaterTime/currentTimer')
-			.integer(wholeSeconds)
+			.integer(thisTimer.wholeSeconds)
 			.string(thisTimer.title)
-			.string(printTime(wholeSeconds))
+			.string(printTime(thisTimer.wholeSeconds))
 			.toBuffer()
+		)
 		
-		oscOutSock.send(buffer, 0, buffer.length, oscOption.outPort, oscOption.address)
+		// oscOutSock.send(buffer, 0, buffer.length, theTimer.OSCSettings.outPort, theTimer.OSCSettings.address)
 	}
 }
 
 function sendSwitch() {
-	if ( oscOption.sendSwitch ) {
-		const theseSwitches = theTimer.serialize()
-		const switchMessages = []
-		for ( const [i, thisTimer] of Object.entries(theseSwitches.switches) ) {
-			switchMessages.push(oscLib
-				.messageBuilder(`/theaterTime/switch/${zPadN(parseInt(i)+1)}`)
-				.string(thisTimer.title)
-				.string(thisTimer.isOn ? thisTimer.onText : thisTimer.offText)
-				.integer(Number(thisTimer.isOn))
-				.toBuffer()
-			)
-		}
-		const buffer = oscLib.buildBundle({
-			timetag  : oscLib.getTimeTagBufferFromDelta(50/1000),
-			elements : switchMessages,
-		})
-		oscOutSock.send(buffer, 0, buffer.length, oscOption.outPort, oscOption.address)
-	}
+	if ( ! theTimer.OSCSettings.sendSwitch ) { return }
+
+	sendOSCOut(oscLib.buildBundle({
+		timetag  : oscLib.getTimeTagBufferFromDelta(50/1000),
+		elements : theTimer.serializeSwitches().map((element, index) => oscLib
+			.messageBuilder(`/theaterTime/switch/${zPadN(index+1)}`)
+			.string(element.title)
+			.string(element.isOn ? element.onText : element.offText)
+			.integer(Number(element.isOn))
+			.toBuffer()
+		),
+	}))
 }
 
 function sendTimer() {
-	if ( oscOption.sendTimerStatus ) {
-		const theseSwitches = theTimer.serialize()
-		const switchMessages = []
-		for ( const [i, thisTimer] of Object.entries(theseSwitches.timers) ) {
-			switchMessages.push(oscLib
-				.messageBuilder(`/theaterTime/timer/${zPadN(parseInt(i)+1)}`)
-				.string(thisTimer.title)
-				.integer(Number(thisTimer.isOn))
-				.toBuffer()
-			)
-		}
-		const buffer = oscLib.buildBundle({
-			timetag  : oscLib.getTimeTagBufferFromDelta(50/1000),
-			elements : switchMessages,
-		})
-		oscOutSock.send(buffer, 0, buffer.length, oscOption.outPort, oscOption.address)
-	}
+	if ( ! theTimer.OSCSettings.sendTimerStatus ) { return }
+
+	sendOSCOut(oscLib.buildBundle({
+		timetag  : oscLib.getTimeTagBufferFromDelta(50/1000),
+		elements : theTimer.serializeTimers().map((element, index) => oscLib
+			.messageBuilder(`/theaterTime/timer/${zPadN(index+1)}`)
+			.string(element.title)
+			.integer(Number(element.isOn))
+			.toBuffer()
+		),
+	}))
+}
+
+function sendOSCOut(buffer) {
+	oscOutSock.send(buffer, 0, buffer.length, theTimer.OSCSettings.outPort, theTimer.OSCSettings.address)
 }
 
 function printTime (secondsLeft) {
 	const timerOverRun = secondsLeft < 0 ? '+ ' : ''
-	const absSec     = Math.abs(secondsLeft)
+	const absSec       = Math.abs(secondsLeft)
 
 	const hourLeft = Math.floor(absSec / 60 / 60)
 	const minLeft  = Math.floor((absSec - hourLeft*60*60) / 60)
@@ -203,6 +187,6 @@ function jsonRespond (obj, err = null) {
 function writeState() {
 	fs.writeFileSync(
 		path.join(__dirname, 'current-state.json'),
-		JSON.stringify(theTimer.getSaveObject(), null, 2)
+		JSON.stringify(theTimer.serializeSave(), null, 2)
 	)
 }

@@ -38,7 +38,7 @@
 			<h6 class="card-subtitle mb-2 text-body-secondary d-inline align-middle" id="dyn_event_title">--</h6>
 			<h6 class="card-subtitle mb-2 text-body-tertiary d-inline align-middle" id="dyn_event_subtitle">--</h6>
 		</div>
-		<div class="container p-4 mt-4">
+		<div class="container-xl p-4 mt-4">
 			<div id="dyn_error_offline" class="text-center d-none alert alert-danger" role="alert">
 				Unable to contact backend, will retry every 5 minutes!
 			</div>
@@ -49,20 +49,9 @@
 				</div>
 			</div>
 
-			<div class="row justify-content-center py-3 gy-2 gx-2" id="dyn_switch_contain">
-			</div>
+			<div class="dyn-switches d-flex justify-content-evenly align-items-center py-3" id="dyn_switch_contain"></div>
 
-			<div class="text-bg-success p-5 rounded-3 d-none" id="dyn_timer_done">
-				<div class="row">
-					<div class="col-2"><i class="huge-text bi bi-hand-thumbs-up"></i></div>
-					<div class="col-10 text-center text-light align-content-center">
-						<h3 class="card-title mb-4">Timers Complete</h3>
-						<p class="h6 fw-normal card-text">This show has been completed, thanks everyone!</p>
-					</div>
-				</div>
-			</div>
-
-			<div class="row  gy-2 gx-2" id="dyn_timer_contain"></div>
+			<div class="row gy-2 gy-lg-3 gx-2 gx-lg-3" id="dyn_timer_contain"></div>
 
 		</div>
 		<footer class="footer fixed-bottom mt-auto bg-primary-subtle small border-top" id="main-footer">
@@ -74,9 +63,9 @@
 		<script src="js/bootstrap.bundle.min.js"></script>
 
 	<template id="template-switch">
-		<div class="col-md-3 col-sm-6 h-100 align-self-stretch">
+		<div class="m-1 flex-grow-1">
 			<div class="card text-bg-{{color}}">
-				<div class="card-body text-center">
+				<div class="card-body text-center p-1 p-sm-3">
 					<h5 class="card-title">{{title}}</h5>
 					<p class="card-text small">{{text}}</p>
 				</div>
@@ -86,10 +75,7 @@
 
 	<template id="template-timer">
 		<div class="col-6">
-			<div class="h-100 p-2 p-lg-3 rounded-3 {{color}}" id="timer_box-{{id}}">
-				<div class="box-icons position-absolute">
-					{{icon}}
-				</div>
+			<div class="h-100 p-2 p-lg-3 rounded-3 {{color}} {{iconName}}" id="timer_box-{{id}}">
 				<div class="row p-md-4">
 					<div class="text-center text-light align-content-center">
 						<h3 class="card-title mb-4">{{title}}</h3>
