@@ -119,6 +119,7 @@ function sendActive() {
 			.integer(thisTimer.wholeSeconds)
 			.string(thisTimer.title)
 			.string(printTime(thisTimer.wholeSeconds))
+			.string(thisTimer.type === 'count-up' ? '↑' : '↓')
 			.toBuffer()
 		)
 		

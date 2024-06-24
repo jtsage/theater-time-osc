@@ -265,6 +265,6 @@ const getData = (isAdmin = false) => {
 			})
 		}).catch( () => {
 			byID('dyn_error_offline').classList.remove('d-none')
-			autoRefresh = setTimeout(getData, 5 * 60 * 1000)
+			autoRefresh = setTimeout(getData, 1 * 60 * 1000)
 		})
 }

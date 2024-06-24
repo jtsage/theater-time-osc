@@ -15,14 +15,14 @@ oscSendTimerStatus = true
 httpPort   = 2222
 
 [[switches]]
-title = "House"
-onText = "House is OPEN"
-offText = "House is NOT open"
-
-[[switches]]
 title = "Microphones"
 onText = "Microphones are READY"
 offText = "Microphones are NOT ready"
+
+[[switches]]
+title = "House"
+onText = "House is OPEN"
+offText = "House is NOT open"
 
 [[switches]]
 title = "Places"
