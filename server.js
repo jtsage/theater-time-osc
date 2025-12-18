@@ -69,7 +69,7 @@ fastify.get('/api*', async (_, reply) => {
 	return jsonRespond({}, 'invalid-request')
 })
 
-fastify.listen({ port : theTimer.HTTPSettings.port }, (err) => {
+fastify.listen({ host : '::', port : theTimer.HTTPSettings.port }, (err) => {
 	if (err) {
 		fastify.log.error(err)
 		process.exit(1)
@@ -130,16 +130,31 @@ function sendActive() {
 function sendSwitch() {
 	if ( ! theTimer.OSCSettings.sendSwitch ) { return }
 
+	// Old way of sending.
+	// sendOSCOut(oscLib.buildBundle({
+	// 	timetag  : oscLib.getTimeTagBufferFromDelta(50/1000),
+	// 	elements : theTimer.serializeSwitches().map((element, index) => oscLib
+	// 		.messageBuilder(`/theaterTime/switch/${zPadN(index+1)}`)
+	// 		.string(element.title)
+	// 		.string(element.isOn ? element.onText : element.offText)
+	// 		.integer(Number(element.isOn))
+	// 		.toBuffer()
+	// 	),
+	// }))
+
+	// New way of sending
+	// argument 1 : onText (if on) or empty
+	// argument 2:  offText (if off) or empty
 	sendOSCOut(oscLib.buildBundle({
 		timetag  : oscLib.getTimeTagBufferFromDelta(50/1000),
 		elements : theTimer.serializeSwitches().map((element, index) => oscLib
-			.messageBuilder(`/theaterTime/switch/${zPadN(index+1)}`)
-			.string(element.title)
-			.string(element.isOn ? element.onText : element.offText)
-			.integer(Number(element.isOn))
+			.messageBuilder(`/theaterTime/toggle/${zPadN(index+1)}`)
+			.string(element.isOn ? element.onText : ' ')
+			.string(element.isOn ? ' ' : element.offText)
 			.toBuffer()
 		),
 	}))
+
 }
 
 function sendTimer() {
