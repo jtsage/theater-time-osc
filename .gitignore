@@ -130,3 +130,4 @@ dist
 .pnp.*
 current-state.json
 shows/
+.DS_Store

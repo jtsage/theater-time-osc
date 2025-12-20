@@ -111,50 +111,62 @@ function doOSC(packet) {
 function sendActive() {
 	if ( theTimer.OSCSettings.sendActiveTimer ) {
 		const thisTimer = theTimer.serializeOSCTimer()
-
+		
 		if ( thisTimer === null ) { return }
 
-		sendOSCOut(oscLib
-			.messageBuilder('/theaterTime/currentTimer')
-			.integer(thisTimer.wholeSeconds)
-			.string(thisTimer.title)
-			.string(printTime(thisTimer.wholeSeconds))
-			.string(thisTimer.type === 'count-up' ? '↑' : '↓')
-			.toBuffer()
-		)
+		if ( theTimer.OSCSettings.blinkExpired && ( thisTimer.type !== 'count-up' && thisTimer.wholeSeconds < 0 && thisTimer.wholeSeconds % 3 === 0 ) ) {
+			sendOSCOut(oscLib
+				.messageBuilder('/theaterTime/currentTimer')
+				.integer(thisTimer.wholeSeconds)
+				.string('')
+				.string('')
+				.string('')
+				.toBuffer()
+			)
+		} else {
+			sendOSCOut(oscLib
+				.messageBuilder('/theaterTime/currentTimer')
+				.integer(thisTimer.wholeSeconds)
+				.string(thisTimer.title)
+				.string(printTime(thisTimer.wholeSeconds))
+				.string(thisTimer.type === 'count-up' ? '↑' : '↓')
+				.toBuffer()
+			)
+		}
 		
 		// oscOutSock.send(buffer, 0, buffer.length, theTimer.OSCSettings.outPort, theTimer.OSCSettings.address)
 	}
 }
 
 function sendSwitch() {
-	if ( ! theTimer.OSCSettings.sendSwitch ) { return }
-
 	// Old way of sending.
-	// sendOSCOut(oscLib.buildBundle({
-	// 	timetag  : oscLib.getTimeTagBufferFromDelta(50/1000),
-	// 	elements : theTimer.serializeSwitches().map((element, index) => oscLib
-	// 		.messageBuilder(`/theaterTime/switch/${zPadN(index+1)}`)
-	// 		.string(element.title)
-	// 		.string(element.isOn ? element.onText : element.offText)
-	// 		.integer(Number(element.isOn))
-	// 		.toBuffer()
-	// 	),
-	// }))
+	if ( theTimer.OSCSettings.sendSwitch ) {
+		sendOSCOut(oscLib.buildBundle({
+			timetag  : oscLib.getTimeTagBufferFromDelta(50/1000),
+			elements : theTimer.serializeSwitches().map((element, index) => oscLib
+				.messageBuilder(`/theaterTime/switch/${zPadN(index+1)}`)
+				.string(element.title)
+				.string(element.isOn ? element.onText : element.offText)
+				.integer(Number(element.isOn))
+				.toBuffer()
+			),
+		}))
+	}
 
 	// New way of sending
 	// argument 1 : onText (if on) or empty
 	// argument 2:  offText (if off) or empty
-	sendOSCOut(oscLib.buildBundle({
-		timetag  : oscLib.getTimeTagBufferFromDelta(50/1000),
-		elements : theTimer.serializeSwitches().map((element, index) => oscLib
-			.messageBuilder(`/theaterTime/toggle/${zPadN(index+1)}`)
-			.string(element.isOn ? element.onText : ' ')
-			.string(element.isOn ? ' ' : element.offText)
-			.toBuffer()
-		),
-	}))
-
+	if ( theTimer.OSCSettings.sendToggle ) {
+		sendOSCOut(oscLib.buildBundle({
+			timetag  : oscLib.getTimeTagBufferFromDelta(50/1000),
+			elements : theTimer.serializeSwitches().map((element, index) => oscLib
+				.messageBuilder(`/theaterTime/toggle/${zPadN(index+1)}`)
+				.string(element.isOn ? element.onText : ' ')
+				.string(element.isOn ? ' ' : element.offText)
+				.toBuffer()
+			),
+		}))
+	}
 }
 
 function sendTimer() {

@@ -24,9 +24,11 @@ oscListenPort      = 4488
 oscSendAddress     = "192.168.10.170" 
 oscSendPort        = 4444
 
-oscSendSwitch      = true # Send switches
+oscSendSwitch      = true # Send switches as strings (1 argument)
+oscSendToggle      = true # Send switches as toggles (2 arguments)
 oscSendActiveTimer = true # Send the active timer
 oscSendTimerStatus = true # Send all timer status(es)
+oscBlinkExpiredTimer = true # Blink the timer text off for 1 second in 3 if the count down minutes or time is past.
 
 # Local HTTP port to listen on
 httpPort   = 2222
@@ -100,12 +102,18 @@ Timers do not have direct access, they are a stack
 
 ## OSC Output - Switches
 
-All switches are sent when configured on.  They arrive in the following format:
+All switches are sent when configured on.  They arrive in the following format for toggles:
 
 `/theaterTime/toggle/## [string:arg1] [string:arg2]`
 
 - Argument 1: onText if switch is on, empty otherwise
 - Argument 2: offText if switch is off, empty otherwise
+
+They arrive in the following format for switches:
+
+`/theaterTime/switch/## [string:arg1]`
+
+- Argument 1: onText if switch is on, offText if switch is off
 
 ## OSC Output - Timers
 
