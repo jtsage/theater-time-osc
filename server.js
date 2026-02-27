@@ -87,7 +87,8 @@ if ( theTimer.OSCSettings.sendActiveTimer ) { setInterval(sendActive, 500) }
 
 function doOSC(packet) {
 	try {
-		const addressParts = oscLib.readPacket(packet).address.replace('/', '').split('/')
+		const oscPacket = oscLib.readPacket(packet)
+		const addressParts = oscPacket.address.replace('/', '').split('/')
 
 		if ( addressParts[0] !== 'theaterTime' ) { return }
 
@@ -102,6 +103,20 @@ function doOSC(packet) {
 			if      ( addressParts[2] === 'next' )     { theTimer.nextTimer() }
 			else if ( addressParts[2] === 'previous' ) { theTimer.prevTimer() }
 			else if ( addressParts[2] === 'stop' )     { theTimer.stopAll() }
+		} else if ( addressParts[1] === 'reset' ) {
+			theTimer.resetAll()
+		} else if ( addressParts[1] === 'update' ) {
+			if        ( addressParts[2] === 'date' ) {
+				theTimer.changeStart(
+					oscPacket.args[0]?.value ?? 0,
+					oscPacket.args[1]?.value ?? 0,
+					oscPacket.args[2]?.value ?? 0
+				)
+			} else if ( addressParts[2] === 'title' && oscPacket.args[0]?.value ) {
+				theTimer.updateTitle(oscPacket.args[0]?.value)
+			} else if ( addressParts[2] === 'subtitle' && oscPacket.args[0]?.value ) {
+				theTimer.updateSubtitle(oscPacket.args[0]?.value)
+			}
 		}
 	} catch (err) {
 		process.stdout.write(`OSC packet problem : ${err}\n`)

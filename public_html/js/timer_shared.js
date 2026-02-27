@@ -49,11 +49,20 @@ const printDate = (date) => {
 }
 
 
+const doOrdinal = (day) => {
+	if (day > 3 && day < 21) return `${day}th` // Exclude 11th, 12th, 13th
+	switch (day % 10) {
+		case 1: return `${day}st`
+		case 2: return `${day}nd`
+		case 3: return `${day}rd`
+		default: return `${day}th`
+	}
+}
 const updatePageTitles = () => {
 	dateObjects.showStart = new Date(payload_data.date)
 	byID('dyn_event_title').innerHTML    = payload_data.title
 	byID('dyn_event_subtitle').innerHTML = payload_data.subtitle
-	byID('dyn_time_start').innerHTML     = `${dateObjects.showStart.getHours()%12 ? dateObjects.showStart.getHours()%12 : 12}:${dateObjects.showStart.getMinutes().toString().padStart(2, 0)} ${dateObjects.showStart.getHours()>11?'PM':'AM'}`
+	byID('dyn_time_start').innerHTML     = `${dateObjects.showStart.getHours()%12 ? dateObjects.showStart.getHours()%12 : 12}:${dateObjects.showStart.getMinutes().toString().padStart(2, 0)} ${dateObjects.showStart.getHours()>11?'PM':'AM'} (${dateObjects.showStart.toLocaleString('default', { weekday : 'long'})} the ${doOrdinal(dateObjects.showStart.getDate())})`
 }
 
 const updateSwitches = () => {

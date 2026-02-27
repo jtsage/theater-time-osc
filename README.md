@@ -100,6 +100,17 @@ Timers do not have direct access, they are a stack
 - `/theaterTime/timer/stop`
   - Stop all timers
 
+### Update Details / Reset
+
+- `/theaterTime/reset`
+  - Reset all switches and timers to initial state
+- `theaterTime/update/start [days] [hours] [minutes]`
+  - Change the start date (first absolute countdown timer) target - days/hours/minutes is an integer value, positive or negative.
+- `theaterTime/update/title [new title]`
+  - Change the title of the event
+- `theaterTime/update/subtitle [new subtitle]`
+  - Change the subtitle of the event
+
 ## OSC Output - Switches
 
 All switches are sent when configured on.  They arrive in the following format for toggles:
