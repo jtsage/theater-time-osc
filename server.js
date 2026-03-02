@@ -10,6 +10,7 @@ const fastify  = require('fastify')({ ignoreTrailingSlash : true, logger : true 
 const fs       = require('node:fs')
 const osc      = require('simple-osc-lib')
 const path     = require('node:path')
+const sound    = require('sound-play')
 
 const theseArgs = process.argv.slice(2)
 let theTimer = null
@@ -81,7 +82,7 @@ sendSwitch()
 sendTimer()
 
 if ( theTimer.OSCSettings.sendActiveTimer ) { setInterval(sendActive, 500) }
-
+if ( theTimer.OSCSettings.useAudio) { setInterval(doAudio, 1000)}
 
 /* Helper Functions */
 
@@ -120,6 +121,26 @@ function doOSC(packet) {
 		}
 	} catch (err) {
 		process.stdout.write(`OSC packet problem : ${err}\n`)
+	}
+}
+
+function doAudio() {
+	const thisTimer = theTimer.serializeAudioTimer()
+		
+	if ( thisTimer === null ) { return }
+
+	if ( thisTimer.type !== 'count-up' ) {
+		if ( thisTimer.wholeSeconds === 1800 ) {
+			sound.play(path.join(__dirname, 'sound_clips', '30min.wav'))
+		} else if ( thisTimer.wholeSeconds === 1200 ) {
+			sound.play(path.join(__dirname, 'sound_clips', '20min.wav'))
+		} else if ( thisTimer.wholeSeconds === 900 ) {
+			sound.play(path.join(__dirname, 'sound_clips', '15min.wav'))
+		} else if ( thisTimer.wholeSeconds === 600 ) {
+			sound.play(path.join(__dirname, 'sound_clips', '10min.wav'))
+		} else if ( thisTimer.wholeSeconds === 300 ) {
+			sound.play(path.join(__dirname, 'sound_clips', '5min.wav'))
+		}
 	}
 }
 
