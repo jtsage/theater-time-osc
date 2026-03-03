@@ -6,6 +6,10 @@ OSC Version of a simple Theater Timer
 
 This is a simple timer that can keep track of a theater performance (or really any sequential event).  It outputs all of it's data via OSC and via a simple web interface.  Interaction is completely OSC message based.
 
+## Optional Audio
+
+Additionally, the server instance can "speak" the time announcements (30, 20, 15, 10, and 5 minutes) for countdown type timers. Sound should work without alteration on Mac and Windows, and is included in a way that if it fails, the process should continue without an issue. Currently, the web interface does *not* play audio, but if someone needs this functionality, it should be pretty simple to implement.
+
 ## Configuration file
 
 Configuration is handled via a toml file. Annotated Sample is included below.  A Full sample from the author's theater is in `sample.config.toml`
@@ -136,6 +140,7 @@ All switches are sent when configured on.  They arrive in the following format f
 
 - Argument 1: onText if switch is on, empty otherwise
 - Argument 2: offText if switch is off, empty otherwise
+- Argument placement is reversed for reverseColor switches.
 
 They arrive in the following format for switches:
 

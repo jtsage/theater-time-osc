@@ -11,6 +11,7 @@ oscSendSwitch      = true
 oscSendToggle      = true 
 oscSendActiveTimer = true
 oscSendTimerStatus = true
+oscBlinkExpiredTimer = true
 
 # Audio
 useAudio = true
