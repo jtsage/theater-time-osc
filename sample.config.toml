@@ -11,6 +11,15 @@ oscSendSwitch      = true
 oscSendActiveTimer = true
 oscSendTimerStatus = true
 
+# Audio
+useAudio = true
+audioVol = 0.5
+timer_05 = '5min.wav'
+timer_10 = '10min.wav'
+timer_15 = '15min.wav'
+timer_20 = '20min.wav'
+timer_30 = '30min.wav'
+
 # Local HTTP
 httpPort   = 2222
 
@@ -18,16 +27,19 @@ httpPort   = 2222
 title = "Microphones"
 onText = "Microphones are READY"
 offText = "Microphones are NOT ready"
+audioFile = 'mics.wav'
 
 [[switches]]
 title = "House"
 onText = "House is OPEN"
 offText = "House is NOT open"
+audioFile = 'house.wav'
 
 [[switches]]
 title = "Places"
 onText = "Places HAS been called"
 offText = "Places HAS NOT been called"
+audioFile = "places.wav"
 
 [[timers]]
 title = "Pre Show"
@@ -35,7 +47,6 @@ start_countdown = true
 extras = [
 	"Bar Ready?",
 	"House Manager Ready?",
-	"Preshow Presenter Ready?"
 ]
 
 [[timers]]
@@ -44,7 +55,7 @@ count_up = true
 
 [[timers]]
 title = "Intermission"
-count_minutes = 3
+count_minutes = 15
 reset_switches = ["Places"]
 
 [[timers]]

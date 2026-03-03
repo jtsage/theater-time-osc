@@ -33,6 +33,17 @@ oscBlinkExpiredTimer = true # Blink the timer text off for 1 second in 3 if the 
 # Local HTTP port to listen on
 httpPort   = 2222
 
+# Audio Settings - default values shown will be used if not overridden
+#
+# Audio files must be in the sound_clips folder.
+useAudio = true # Use audio announcements
+audioVol = 0.5 # Volume 0->1.0
+timer_05 = '5min.wav' # 5 minute call, etc..
+timer_10 = '10min.wav'
+timer_15 = '15min.wav'
+timer_20 = '20min.wav'
+timer_30 = '30min.wav'
+
 # Switch definitions - you can have as many as you want, they are numbered sequentially as they appear
 #
 # Title: name of the switch
@@ -42,6 +53,7 @@ httpPort   = 2222
 title = "Microphones"
 onText = "Microphones are READY"
 offText = "Microphones are NOT ready"
+audioFile = null # Or a string of the audio file to place, e.g. "mics.wav"
 
 # Timer definitions - you can have as many as you like, but `start_countdown` type can only be used once, and first.
 #

@@ -82,7 +82,7 @@ sendSwitch()
 sendTimer()
 
 if ( theTimer.OSCSettings.sendActiveTimer ) { setInterval(sendActive, 500) }
-if ( theTimer.OSCSettings.useAudio) { setInterval(doAudio, 1000)}
+if ( theTimer.audioSettings.useAudio) { setInterval(doAudio, 1000)}
 
 /* Helper Functions */
 
@@ -126,21 +126,9 @@ function doOSC(packet) {
 
 function doAudio() {
 	const thisTimer = theTimer.serializeAudioTimer()
-		
-	if ( thisTimer === null ) { return }
 
-	if ( thisTimer.type !== 'count-up' ) {
-		if ( thisTimer.wholeSeconds === 1800 ) {
-			sound.play(path.join(__dirname, 'sound_clips', '30min.wav'))
-		} else if ( thisTimer.wholeSeconds === 1200 ) {
-			sound.play(path.join(__dirname, 'sound_clips', '20min.wav'))
-		} else if ( thisTimer.wholeSeconds === 900 ) {
-			sound.play(path.join(__dirname, 'sound_clips', '15min.wav'))
-		} else if ( thisTimer.wholeSeconds === 600 ) {
-			sound.play(path.join(__dirname, 'sound_clips', '10min.wav'))
-		} else if ( thisTimer.wholeSeconds === 300 ) {
-			sound.play(path.join(__dirname, 'sound_clips', '5min.wav'))
-		}
+	if ( thisTimer !== null && thisTimer.type !== 'count-up' ) {
+		theTimer.audioPlayTimer(thisTimer.wholeSeconds)
 	}
 }
 
@@ -169,8 +157,6 @@ function sendActive() {
 				.toBuffer()
 			)
 		}
-		
-		// oscOutSock.send(buffer, 0, buffer.length, theTimer.OSCSettings.outPort, theTimer.OSCSettings.address)
 	}
 }
 
