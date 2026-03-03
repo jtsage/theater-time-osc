@@ -6,7 +6,7 @@
 */
 const ThrTime  = require('./lib/timers.js')
 const dgram    = require('node:dgram')
-const fastify  = require('fastify')({ ignoreTrailingSlash : true, logger : true })
+const fastify  = require('fastify')({ logger : true, routerOptions: { ignoreTrailingSlash: true } })
 const fs       = require('node:fs')
 const osc      = require('simple-osc-lib')
 const path     = require('node:path')
