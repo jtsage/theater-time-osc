@@ -439,6 +439,11 @@
   resolved "https://registry.npmjs.org/@humanwhocodes/retry/-/retry-0.4.3.tgz"
   integrity sha512-bV0Tgo9K4hfPCek+aMAn81RppFKv2ySDQeMoSZuvTASywNTnVJCArCZE2FWqpvIatKu7VMRLWlR1EazvVhDyhQ==
 
+"@iarna/toml@^2.2.5":
+  version "2.2.5"
+  resolved "https://registry.npmjs.org/@iarna/toml/-/toml-2.2.5.tgz"
+  integrity sha512-trnsAYxU3xnS1gPHPyU961coFyLkh4gAD/0zQ5mymY4yOZ+CYvsPqUbOFSw0aDM4y0tV7tiFxL/1XfXPNC6IPg==
+
 "@istanbuljs/load-nyc-config@^1.0.0":
   version "1.1.0"
   resolved "https://registry.npmjs.org/@istanbuljs/load-nyc-config/-/load-nyc-config-1.1.0.tgz"
@@ -1494,11 +1499,6 @@ fast-querystring@^1.0.0:
   integrity sha512-g6KuKWmFXc0fID8WWH0jit4g0AGBoJhCkJMb1RmbsSEUNvQ+ZC8D6CUZ+GtF8nMzSPXnhiePyyqqipzNNEnHjg==
   dependencies:
     fast-decode-uri-component "^1.0.1"
-
-fast-toml@^0.5.4:
-  version "0.5.4"
-  resolved "https://registry.npmjs.org/fast-toml/-/fast-toml-0.5.4.tgz"
-  integrity sha512-nUX94P84wE3gcem12g4FAH3xV7BmcCoV8FXcFVV+NIQAOwRJnyqVKhdGd9DqI4CunW+wOZhVBGKI6Jut/OlLTw==
 
 fast-uri@^3.0.0, fast-uri@^3.0.1:
   version "3.1.0"

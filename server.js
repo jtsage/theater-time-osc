@@ -10,20 +10,16 @@ const fastify  = require('fastify')({ logger : true, routerOptions : { ignoreTra
 const fs       = require('node:fs')
 const osc      = require('simple-osc-lib')
 const path     = require('node:path')
+const TOML     = require('@iarna/toml')
 
 const theseArgs = process.argv.slice(2)
 let theTimer = null
 
-if ( theseArgs.length === 0 ) {
-	if ( fs.existsSync(path.join(__dirname, 'current-state.json')) ) {
-		theTimer = new ThrTime.Timer('current-state.json')
-	} else {
-		throw new SyntaxError('Saved State Not Found -- Usage: npm start file.toml ISO-date ISO-24hr-time')
-	}
-} else if ( theseArgs.length !== 3 ) {
-	throw new SyntaxError('Usage: npm start file.toml ISO-date ISO-24hr-time')
+if ( theseArgs.length !== 3 ) {
+	process.stdout.write('Usage: npm start file.toml ISO-date ISO-24hr-time\n')
+	process.exit(1)
 } else {
-	theTimer = new ThrTime.Timer(...theseArgs)
+	theTimer = new ThrTime.Timer(...theseArgs, false)
 }
 
 const oscSocket  = dgram.createSocket({type : 'udp4', reuseAddr : true})
@@ -61,7 +57,7 @@ fastify.get('/api/read/remote', async (_, reply) => {
 
 fastify.get('/api/read/admin', async (_, reply) => {
 	reply.type('application/json').code(200)
-	return jsonRespond({message : theTimer.serialize() })
+	return jsonRespond({message : theTimer.serialize })
 })
 
 fastify.get('/api*', async (_, reply) => {
@@ -83,7 +79,7 @@ setInterval(sendSwitch, 30000)
 setInterval(sendTimer, 30000)
 
 if ( theTimer.OSCSettings.sendActiveTimer ) { setInterval(sendActive, 500) }
-if ( theTimer.audioSettings.useAudio) { setInterval(doAudio, 1000)}
+if ( theTimer.audioSettings.use) { setInterval(doAudio, 1000)}
 
 /* Helper Functions */
 
@@ -245,7 +241,7 @@ function jsonRespond (obj, err = null) {
 
 function writeState() {
 	fs.writeFileSync(
-		path.join(__dirname, 'current-state.json'),
-		JSON.stringify(theTimer.serializeSave(), null, 2)
+		path.join(__dirname, 'current-state.toml'),
+		TOML.stringify(theTimer.serializeSave, null, 2)
 	)
 }

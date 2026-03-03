@@ -1,73 +1,132 @@
-# Pedigree
+## SAMPLE CONFIGURATION FILE
+## 
+## This lists all of the options available.  Those that do not require a value
+## are shown commented out, with their default values included.
 
-title = "Sample Theater"
+## Pedigree
+## 
+## 'title' and 'subtitle' are strings
+[show]
+title    = "Sample Theater"
 subtitle = "Sample Show"
 
-# OSC
-oscListenPort      = 4488
-oscSendAddress     = "127.0.0.1"
-oscSendPort        = 4444
-oscSendSwitch      = true
-oscSendToggle      = true 
-oscSendActiveTimer = true
-oscSendTimerStatus = true
-oscBlinkExpiredTimer = true
+## OSC Control
+##
+##
+## 'listenPort' is the port TheaterTime listens on (all interfaces)
+## 'sendAddress' and 'sendPort' is the port/address TheaterTime sends messages to
+## 'sendSwitch' - send switch state messages
+## 'sendToggle' - send switch state messages as toggles (see Readme)
+## 'sendActiveTimer` - send the running timer
+## 'sendTimerStatus' - send all timers
+## 'blinkExpired' - when a timer is expired (countdown style), blink the text at around
+##    0.33Hz (on for 2 seconds, off for 1)
+[osc]
+# listenPort        = 4488
+# sendAddress       = "127.0.0.1"
+# sendPort          = 4444
+# sendSwitch        = true
+# sendToggle        = true 
+# sendActiveTimer   = true
+# sendTimerStatus   = true
+blinkExpired      = true
 
-# Audio
-useAudio = true
-audioVol = 0.5
-timer_05 = '5min.wav'
-timer_10 = '10min.wav'
-timer_15 = '15min.wav'
-timer_20 = '20min.wav'
-timer_30 = '30min.wav'
+## Audio
+## 
+## Audio is played by the server process.
+##
+## 'use' is a boolean, setting to false disables audio output
+## 'volume' is on a 0->1.0 scale
+## 'timer_##' is the file played at ## minutes remaining for countdown type timers
+[audio]
+# use = true
+# volume = 0.5
+# timer_05 = '5min.wav'
+# timer_10 = '10min.wav'
+# timer_15 = '15min.wav'
+# timer_20 = '20min.wav'
+# timer_30 = '30min.wav'
 
-# Local HTTP
+# Local HTTP Port
 httpPort   = 2222
 
+## SWITCHES
+## Switches are ON/OFF Data points.  They can be "forced" off by a timer starting or
+## another switch being turned on.
+##
+## 'title', 'onText', and 'offText' are strings.
+## 'isOn' can start a switch in the already "ON" state
+## 'audioFile' will be played when the switch is toggled on
+## 'resetSwitches' will toggle the named (title) switch OFF when that switch if turned on
+## 'reverseColor' reverses the traffic light color - green for OFF, red for ON
+
 [[switches]]
-title = "Microphones"
-onText = "Microphones are READY"
-offText = "Microphones are NOT ready"
+title     = "Microphones"
+onText    = "Microphones are READY"
+offText   = "Microphones are NOT ready"
+# isOn    = false
 audioFile = 'mics.wav'
 
 [[switches]]
-title = "House"
-onText = "House is OPEN"
-offText = "House is NOT open"
+title     = "House"
+onText    = "House is OPEN"
+offText   = "House is NOT open"
+# isOn    = false
 audioFile = 'house.wav'
 
 [[switches]]
-title = "Places"
-onText = "Places HAS been called"
-offText = "Places HAS NOT been called"
-audioFile = "places.wav"
-reset_switches = ["Hold"]
+title         = "Places"
+onText        = "Places HAS been called"
+offText       = "Places HAS NOT been called"
+# isOn        = false
+audioFile     = "places.wav"
+resetSwitches = ["Hold"]
 
 [[switches]]
-title = "Hold"
-onText = "House NEEDS a hold"
-offText = "House DOES NOT need a hold"
-audioFile = "hold.wav"
+title        = "Hold"
+onText       = "House NEEDS a hold"
+offText      = "House DOES NOT need a hold"
+# isOn       = false
+audioFile    = "hold.wav"
 reverseColor = true
 
+## TIMERS
+##
+## Timers are the nuts and bolts of this package
+##
+## 'startCountDown = true' can appear once, and must be first.  This timer type counts
+## down to a known date & time, supplied at the command line.  It can be altered later
+## via OSC commands
+##
+## 'countUp = true' can appear any number of times, it starts from zero and counts up
+## until stopped.
+##
+## 'countMinutes = ##' can appear any number of times, it counts down a known number of
+## minutes from when it is started.
+##
+## 'title' is a string
+## 'extras' can appear on any timer type, and just gives extra info - it only appears in
+##    the administrative web view.
+## 'resetSwitches' can appear in any timer type, and resets those switch titles to
+##    their OFF state when the timer is started.
+
 [[timers]]
-title = "Pre Show"
-start_countdown = true
-extras = [
+title          = "Pre Show"
+startCountDown = true
+extras         = [
 	"Bar Ready?",
 	"House Manager Ready?",
 ]
 
 [[timers]]
-title = "Act 1"
-count_up = true
+title   = "Act 1"
+countUp = true
 
 [[timers]]
-title = "Intermission"
-count_minutes = 15
-reset_switches = ["Places"]
+title         = "Intermission"
+countMinutes  = 15
+resetSwitches = ["Places"]
 
 [[timers]]
-title = "Act 2"
-count_up = true
+title   = "Act 2"
+countUp = true
