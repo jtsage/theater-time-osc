@@ -8,6 +8,7 @@ oscListenPort      = 4488
 oscSendAddress     = "127.0.0.1"
 oscSendPort        = 4444
 oscSendSwitch      = true
+oscSendToggle      = true 
 oscSendActiveTimer = true
 oscSendTimerStatus = true
 
@@ -40,6 +41,14 @@ title = "Places"
 onText = "Places HAS been called"
 offText = "Places HAS NOT been called"
 audioFile = "places.wav"
+reset_switches = ["Hold"]
+
+[[switches]]
+title = "Hold"
+onText = "House NEEDS a hold"
+offText = "House DOES NOT need a hold"
+audioFile = "hold.wav"
+reverseColor = true
 
 [[timers]]
 title = "Pre Show"

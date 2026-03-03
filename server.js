@@ -80,6 +80,8 @@ fastify.listen({ host : '::', port : theTimer.HTTPSettings.port }, (err) => {
 /* Startup Tasks */
 sendSwitch()
 sendTimer()
+setInterval(sendSwitch, 30000)
+setInterval(sendTimer, 30000)
 
 if ( theTimer.OSCSettings.sendActiveTimer ) { setInterval(sendActive, 500) }
 if ( theTimer.audioSettings.useAudio) { setInterval(doAudio, 1000)}
@@ -181,12 +183,21 @@ function sendSwitch() {
 	if ( theTimer.OSCSettings.sendToggle ) {
 		sendOSCOut(oscLib.buildBundle({
 			timetag  : oscLib.getTimeTagBufferFromDelta(50/1000),
-			elements : theTimer.serializeSwitches().map((element, index) => oscLib
-				.messageBuilder(`/theaterTime/toggle/${zPadN(index+1)}`)
-				.string(element.isOn ? element.onText : ' ')
-				.string(element.isOn ? ' ' : element.offText)
-				.toBuffer()
-			),
+			elements : theTimer.serializeSwitches().map((e, index) => {
+				const textStrings = [' ', ' '];
+				if ( e.reverseColor ) {
+					if ( e.isOn ) { textStrings[1] = e.onText }
+					else { textStrings[0] = e.offText }
+				} else {
+					if ( e.isOn ) { textStrings[0] = e.onText }
+					else { textStrings[1] = e.offText }
+				}
+				return oscLib
+					.messageBuilder(`/theaterTime/toggle/${zPadN(index+1)}`)
+					.string(textStrings[0])
+					.string(textStrings[1])
+					.toBuffer()
+			}),
 		}))
 	}
 }

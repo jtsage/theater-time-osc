@@ -70,10 +70,11 @@ const updateSwitches = () => {
 	const newHTML      = []
 
 	for ( const thisSwitch of payload_data.switches ) {
+		const isOnColor = ( thisSwitch.isOn && !thisSwitch.reverseColor ) || ( thisSwitch.reverseColor && !thisSwitch.isOn )
 		newHTML.push(templateHTML
 			.replaceAll('{{title}}', thisSwitch.title)
 			.replaceAll('{{text}}', thisSwitch.isOn ? thisSwitch.onText : thisSwitch.offText)
-			.replaceAll('{{color}}', thisSwitch.isOn ? 'success' : 'danger')
+			.replaceAll('{{color}}', isOnColor ? 'success' : 'danger')
 		)
 	}
 	byID('dyn_switch_contain').innerHTML = newHTML.join('')

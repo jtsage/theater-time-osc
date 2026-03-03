@@ -8,7 +8,7 @@ This is a simple timer that can keep track of a theater performance (or really a
 
 ## Configuration file
 
-Configuration is handled via a toml file. A Sample is included below.
+Configuration is handled via a toml file. Annotated Sample is included below.  A Full sample from the author's theater is in `sample.config.toml`
 
 ```toml
 # Pedigree
@@ -49,11 +49,16 @@ timer_30 = '30min.wav'
 # Title: name of the switch
 # onText: Text to use when on
 # offText: Text to use when off (default state)
+# audioFile : Audio file to play when switch turns on
+# reset_switches : For a dependant switch - e.g. "Hold" that a "Places" call clears (see also in timers)
+# reverseColor : Switch traffic light colors - red for ON, green for OFF
 [[switches]]
 title = "Microphones"
 onText = "Microphones are READY"
 offText = "Microphones are NOT ready"
-audioFile = null # Or a string of the audio file to place, e.g. "mics.wav"
+audioFile = null
+reset_switches = []
+reverseColor = false
 
 # Timer definitions - you can have as many as you like, but `start_countdown` type can only be used once, and first.
 #
