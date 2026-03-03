@@ -6,11 +6,10 @@
 */
 const ThrTime  = require('./lib/timers.js')
 const dgram    = require('node:dgram')
-const fastify  = require('fastify')({ logger : true, routerOptions: { ignoreTrailingSlash: true } })
+const fastify  = require('fastify')({ logger : true, routerOptions : { ignoreTrailingSlash : true } })
 const fs       = require('node:fs')
 const osc      = require('simple-osc-lib')
 const path     = require('node:path')
-const sound    = require('sound-play')
 
 const theseArgs = process.argv.slice(2)
 let theTimer = null
@@ -184,14 +183,13 @@ function sendSwitch() {
 		sendOSCOut(oscLib.buildBundle({
 			timetag  : oscLib.getTimeTagBufferFromDelta(50/1000),
 			elements : theTimer.serializeSwitches().map((e, index) => {
-				const textStrings = [' ', ' '];
-				if ( e.reverseColor ) {
-					if ( e.isOn ) { textStrings[1] = e.onText }
-					else { textStrings[0] = e.offText }
-				} else {
-					if ( e.isOn ) { textStrings[0] = e.onText }
-					else { textStrings[1] = e.offText }
-				}
+				const textStrings = [
+					e.isOn ? e.onText : ' ',
+					e.isOn ? ' ' : e.offText
+				]
+
+				if ( e.reverseColor ) { textStrings.reverse() }
+
 				return oscLib
 					.messageBuilder(`/theaterTime/toggle/${zPadN(index+1)}`)
 					.string(textStrings[0])
