@@ -225,6 +225,10 @@ To run, create a toml file, and provide a date and time a the command line - dat
 
 `# npm start shows/my_show.toml 2025-12-18 19:30`
 
+If for some reason the server process exits, and you want to pick up where you left off, you can start with no arguments, and the last saved state will be resumed.  Note that timers are based on timestamps, so the server exiting does not pause a timer.
+
+`# npm start`
+
 ## License
 
 Do whatever you like with this code. If it might be helpful to others, maybe open a pull request.

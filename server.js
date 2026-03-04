@@ -15,7 +15,9 @@ const TOML     = require('@iarna/toml')
 const theseArgs = process.argv.slice(2)
 let theTimer = null
 
-if ( theseArgs.length !== 3 ) {
+if ( theseArgs.length === 0 && fs.existsSync(path.join(__dirname, 'current-state.toml')) ) {
+	theTimer = new ThrTime.Timer(path.join(__dirname, 'current-state.toml'), null, null, true)
+} else if ( theseArgs.length !== 3 ) {
 	process.stdout.write('Usage: npm start file.toml ISO-date ISO-24hr-time\n')
 	process.exit(1)
 } else {
@@ -42,6 +44,7 @@ theTimer.on('switch-updated', sendSwitch)
 theTimer.on('timer-updated', sendTimer)
 theTimer.on('state-save', writeState)
 
+// MARK: Local HTTP
 fastify.register(require('@fastify/static'), {
 	root : path.join(__dirname, 'public_html'),
 })
@@ -72,7 +75,7 @@ fastify.listen({ host : '::', port : theTimer.HTTPSettings.port }, (err) => {
 	}
 })
 
-/* Startup Tasks */
+// MARK: Startup
 sendSwitch()
 sendTimer()
 setInterval(sendSwitch, 30000)
@@ -81,8 +84,9 @@ setInterval(sendTimer, 30000)
 if ( theTimer.OSCSettings.sendActiveTimer ) { setInterval(sendActive, 500) }
 if ( theTimer.audioSettings.use) { setInterval(doAudio, 1000)}
 
-/* Helper Functions */
 
+
+// MARK: OSC (receive)
 function doOSC(packet) {
 	try {
 		const oscPacket = oscLib.readPacket(packet)
@@ -129,6 +133,7 @@ function doAudio() {
 	}
 }
 
+// MARK: OSC (send)
 function sendActive() {
 	if ( theTimer.OSCSettings.sendActiveTimer ) {
 		const thisTimer = theTimer.serializeOSCTimer()
@@ -239,6 +244,7 @@ function jsonRespond (obj, err = null) {
 	return returnObj
 }
 
+// MARK: save state
 function writeState() {
 	fs.writeFileSync(
 		path.join(__dirname, 'current-state.toml'),
