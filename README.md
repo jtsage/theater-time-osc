@@ -4,7 +4,7 @@ Simple Theater Timer for Events and Shows
 
 ## What it is
 
-This is a simple timer that can keep track of a theater performance (or really any sequential event).  It outputs all of it's data via OSC and via a simple web interface.  Interaction is completely OSC message based.  OSC output is specifically tailored to work well with [Vor](https://www.getvor.app/)
+This is a simple timer that can keep track of a theater performance (or really any sequential event).  It outputs all of it's data via OSC and via a simple web interface.  Interaction is OSC message based, although some simple interactions are available in the "admin" web interface.  OSC output is specifically tailored to work well with [Vor](https://www.getvor.app/)
 
 ## Features
 

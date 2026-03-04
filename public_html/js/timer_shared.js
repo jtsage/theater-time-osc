@@ -67,17 +67,21 @@ const updatePageTitles = () => {
 
 const updateSwitches = () => {
 	const templateHTML = byID('template-switch').innerHTML
-	const newHTML      = []
+	byID('dyn_switch_contain').innerHTML = ''
 
-	for ( const thisSwitch of payload_data.switches ) {
+	for ( const [index, thisSwitch] of payload_data.switches.entries() ) {
+		const thisHTML     = document.createElement('div')
 		const isOnColor = ( thisSwitch.isOn && !thisSwitch.reverseColor ) || ( thisSwitch.reverseColor && !thisSwitch.isOn )
-		newHTML.push(templateHTML
+		thisHTML.innerHTML = templateHTML
 			.replaceAll('{{title}}', thisSwitch.title)
 			.replaceAll('{{text}}', thisSwitch.isOn ? thisSwitch.onText : thisSwitch.offText)
 			.replaceAll('{{color}}', isOnColor ? 'success' : 'danger')
-		)
+		thisHTML.firstElementChild.addEventListener('click', () => {
+			const thisURL = `${location.protocol}//${location.host}/api/write/toggle/${index}`
+			fetch(thisURL).then(() => { getData(true) }).catch(() => {})
+		})
+		byID('dyn_switch_contain').append(thisHTML.firstElementChild)
 	}
-	byID('dyn_switch_contain').innerHTML = newHTML.join('')
 }
 
 const updateTimerAdmin = () => {
@@ -176,6 +180,7 @@ const updateTimerAdmin = () => {
 			.replaceAll('{{showEndTime}}', string_endTime === '' ? 'd-none' : '')
 			.replaceAll('{{showStartTime}}', string_startTime === '' ? 'd-none' : '')
 			.replaceAll('{{showExtras}}', string_extras === '' ? 'd-none' : '')
+			.replaceAll('{{showNextButton}}', thisTimer.isOn ? '' : 'd-none')
 			.replaceAll('{{extras}}', string_extras)
 			.replaceAll('{{color}}', string_color)
 			.replaceAll('{{iconName}}', `icon-${thisTimer.type}`)
@@ -246,8 +251,12 @@ const updatePageInfo = (isAdmin) => {
 	}
 }
 
-
 // eslint-disable-next-line no-unused-vars
+const advance_timer = () => {
+	const thisURL = `${location.protocol}//${location.host}/api/write/next`
+	fetch(thisURL).then(() => { getData(true) }).catch(() => {})
+}
+
 const getData = (isAdmin = false) => {
 	if ( autoRefresh !== null ) {
 		clearTimeout(autoRefresh)
@@ -262,7 +271,7 @@ const getData = (isAdmin = false) => {
 			}
 
 			response.json().then((data) => {
-				const refreshTime = isAdmin ? 5000 : 2000
+				const refreshTime = isAdmin ? 500000 : 2000
 				autoRefresh       = setTimeout(() => { getData(isAdmin) }, refreshTime)
 				payload_data      = data.message
 				byID('dyn_error_offline').classList.add('d-none')

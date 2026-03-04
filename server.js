@@ -63,6 +63,18 @@ fastify.get('/api/read/admin', async (_, reply) => {
 	return jsonRespond({message : theTimer.serialize })
 })
 
+fastify.get('/api/write/toggle/:index', async (request, reply) => {
+	theTimer.switchToggle(request.params.index)
+	reply.type('application/json').code(200)
+	return jsonRespond({}, 'request-handled')
+})
+
+fastify.get('/api/write/next', async (_, reply) => {
+	theTimer.nextTimer()
+	reply.type('application/json').code(200)
+	return jsonRespond({}, 'request-handled')
+})
+
 fastify.get('/api*', async (_, reply) => {
 	reply.type('application/json').code(403)
 	return jsonRespond({}, 'invalid-request')
